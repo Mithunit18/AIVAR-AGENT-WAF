@@ -61,11 +61,28 @@ SEPARATOR = "=" * 60
 
 def run_simulation():
     if not os.getenv("GEMINI_API_KEY"):
-        print("Error: GEMINI_API_KEY not set. Run:\n  $env:GEMINI_API_KEY='your-key'")
+        print("GEMINI_API_KEY is not configured.")
         return
 
+    if "localhost" in agent_tools.WAF_BASE_URL or "127.0.0.1" in agent_tools.WAF_BASE_URL:
+        dashboard_url = "http://localhost:5173"
+    else:
+        dashboard_url = agent_tools.WAF_BASE_URL
+
+    import requests
+    print("Waiting for WAF to become ready...")
+    for _ in range(12):
+        try:
+            r = requests.get(f"{agent_tools.WAF_BASE_URL}/health", timeout=2)
+            if r.status_code == 200:
+                break
+        except requests.exceptions.RequestException:
+            pass
+        time.sleep(5)
+
     print("\nStarting AI Agent WAF Simulation...\n")
-    print("Watch the dashboard live at: http://localhost:5173\n")
+    print(f"WAF Target: {agent_tools.WAF_BASE_URL}")
+    print(f"Dashboard: {dashboard_url}\n")
     print(SEPARATOR)
 
     # Use gemini-3.5-flash (available via new Interactions API)
@@ -113,7 +130,9 @@ def run_simulation():
         # Fresh session per scenario to isolate sequence rule state
         agent_tools.SESSION_ID = f"sess-llm-{scenario['id']}-{int(time.time())}"
 
-        print(f"\n--- Scenario {scenario['id']}: {scenario['desc']} ---")
+        print(f"\n{SEPARATOR}")
+        print(f"Scenario {scenario['id']}: {scenario['desc']}")
+        print(f"{SEPARATOR}")
         print(f"Prompt: {scenario['prompt']}\n")
 
         try:
@@ -121,7 +140,7 @@ def run_simulation():
             final = result["messages"][-1].content
             print(f"Agent Final Answer:\n{final}")
         except Exception as e:
-            if "429 RESOURCE_EXHAUSTED" in str(e):
+            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
                 print(f"Agent Error: Gemini API quota exhausted (RESOURCE_EXHAUSTED).")
                 print("This scenario could not be executed. This is not a WAF failure.")
             else:
@@ -131,7 +150,7 @@ def run_simulation():
         time.sleep(2)  # pace between scenarios
 
     print(f"\n{SEPARATOR}")
-    print("Simulation complete! Check the dashboard at http://localhost:5173")
+    print(f"Simulation complete! Check the dashboard at {dashboard_url}")
     print(SEPARATOR)
 
 if __name__ == "__main__":

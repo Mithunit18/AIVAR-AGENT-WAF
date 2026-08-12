@@ -53,5 +53,19 @@ services:
       backend:
         condition: service_healthy
 
+  agent:
+    build:
+      context: ./agent_runner
+      dockerfile: Dockerfile
+    container_name: waf_agent_prod
+    profiles:
+      - manual
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - WAF_BASE_URL=http://nginx
+    depends_on:
+      backend:
+        condition: service_healthy
+
 volumes:
   mongodb_data_prod:
