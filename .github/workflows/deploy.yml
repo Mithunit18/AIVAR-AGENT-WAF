@@ -18,30 +18,38 @@ jobs:
         image: redis:7.0-alpine
         ports:
           - 6379:6379
-          
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-          
+
       - name: Run Backend Tests
         run: |
           cd backend
           pip install -r requirements.txt pytest pytest-asyncio httpx
           pytest
-          
+
+      - name: Create Temporary CI .env
+        run: |
+          echo "GEMINI_API_KEY=ci-dummy-key-for-validation" > .env
+
       - name: Validate Docker Compose Configuration
         run: docker compose -f docker-compose.prod.yml config -q
-        
+
       - name: Build Production Images
         run: |
           export COMMIT_SHA=${{ github.sha }}
           docker compose -f docker-compose.prod.yml build --build-arg COMMIT_SHA=$COMMIT_SHA
-          
+
+      - name: Cleanup Temporary CI .env
+        if: always()
+        run: rm -f .env
+
       - name: Deploy to EC2 and Verify
         uses: appleboy/ssh-action@v1.2.5
         with:
@@ -51,43 +59,43 @@ jobs:
           script_stop: true
           script: |
             cd /opt/aivar-agent-waf
-            
+
             # 1. Record previous state for safe rollback
             OLD_SHA=$(git rev-parse HEAD)
             echo "Current deployed commit is: $OLD_SHA"
-            
+
             # 2. Fetch and apply the latest changes
             git fetch origin main
             git reset --hard origin/main
-            
+
             export COMMIT_SHA=${{ github.sha }}
-            
+
             echo "Building new images for commit $COMMIT_SHA..."
             docker compose -f docker-compose.prod.yml build --build-arg COMMIT_SHA=$COMMIT_SHA
-            
+
             echo "Restarting infrastructure services..."
             docker compose -f docker-compose.prod.yml up -d nginx backend mongodb redis
-            
+
             echo "Waiting 15 seconds for services to initialize..."
             sleep 15
-            
+
             # 3. Perform Health and Readiness Checks
             HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/health || echo "failed")
             READY_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/ready || echo "failed")
-            
+
             if [ "$HEALTH_STATUS" != "200" ] || [ "$READY_STATUS" != "200" ]; then
               echo "Deployment failed health checks! (Health: $HEALTH_STATUS, Ready: $READY_STATUS)."
               echo "Initiating rollback to $OLD_SHA..."
-              
+
               git reset --hard $OLD_SHA
               export COMMIT_SHA=$OLD_SHA
               docker compose -f docker-compose.prod.yml build --build-arg COMMIT_SHA=$COMMIT_SHA
               docker compose -f docker-compose.prod.yml up -d nginx backend mongodb redis
-              
+
               echo "Rollback completed. The deployment has failed."
               exit 1
             fi
-            
+
             # 4. Success reporting
             echo "========================================"
             echo "Deployment successful"
