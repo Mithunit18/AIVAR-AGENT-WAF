@@ -185,7 +185,7 @@ app.include_router(policies.router, prefix="/api/v1/policies", tags=["Policies"]
 @app.get("/health", tags=["Health"])
 async def health():
     """Liveness probe — confirms the process is running."""
-    return {"status": "healthy", "service": "agent-waf"}
+    return {"status": "healthy", "service": "agent-waf", "commit_sha": settings.commit_sha}
 
 
 @app.get("/ready", tags=["Health"])
@@ -216,4 +216,4 @@ async def ready():
 
 @app.get("/", tags=["Root"])
 async def root():
-    return {"message": "Agent WAF is running", "version": "1.0.0"}
+    return {"message": "Agent WAF is running", "version": "1.0.0", "commit_sha": settings.commit_sha}

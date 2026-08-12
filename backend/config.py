@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     # Policy cache TTL (seconds)
     policy_cache_ttl: int = 30
 
+    # Build Versioning
+    commit_sha: str = "unknown"
+
     @property
     def cors_origins_list(self) -> List[str]:
         return [origin.strip() for origin in self.cors_origins.split(",")]

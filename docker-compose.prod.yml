@@ -27,6 +27,8 @@ services:
     build: 
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        COMMIT_SHA: ${COMMIT_SHA:-unknown}
     container_name: waf_backend_prod
     restart: unless-stopped
     env_file: .env
