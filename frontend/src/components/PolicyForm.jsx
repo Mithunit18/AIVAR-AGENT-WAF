@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { policiesApi } from '../api/policies';
 import { Save, ShieldAlert, Plus, Trash2, Shield, Eye, RefreshCw, X } from 'lucide-react';
-import { InputModal } from './Modal';
 
 const DEFAULT_POLICY = {
   agent_id: '',
@@ -17,8 +16,6 @@ const DEFAULT_POLICY = {
 export default function PolicyForm({ initialData, isEdit, onSuccess, showToast }) {
   const [formData, setFormData] = useState(() => initialData ? JSON.parse(JSON.stringify(initialData)) : JSON.parse(JSON.stringify(DEFAULT_POLICY)));
   const [saving, setSaving] = useState(false);
-  const [toolModal, setToolModal] = useState(false);
-  const [scopeModal, setScopeModal] = useState(false);
 
   // Simple nested state updater
   const updateNested = (path, value) => {
@@ -159,7 +156,12 @@ export default function PolicyForm({ initialData, isEdit, onSuccess, showToast }
               </div>
             ))}
             
-            <button type="button" onClick={() => setToolModal(true)} className="flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors py-1">
+            <button type="button" onClick={() => {
+              const name = window.prompt("Enter tool name to configure (e.g. crm_delete):");
+              if (name && name.trim()) {
+                updateNested(['tool_permissions', name.trim()], { enabled: false });
+              }
+            }} className="flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors py-1">
               <Plus size={16} /> Add Tool Permission
             </button>
           </div>
@@ -193,9 +195,14 @@ export default function PolicyForm({ initialData, isEdit, onSuccess, showToast }
                </div>
              ))}
 
-             <button type="button" onClick={() => setScopeModal(true)} className="flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors py-1">
-               <Plus size={16} /> Add Scope Constraint
-             </button>
+             <button type="button" onClick={() => {
+              const name = window.prompt("Enter parameter key to restrict (e.g. customer_id):");
+              if (name && name.trim()) {
+                updateNested(['data_scope', 'allowed_scopes', name.trim()], []);
+              }
+            }} className="flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors py-1">
+              <Plus size={16} /> Add Scope Constraint
+            </button>
           </div>
         </div>
       </div>
@@ -210,34 +217,6 @@ export default function PolicyForm({ initialData, isEdit, onSuccess, showToast }
           {saving ? 'Saving...' : 'Save Policy'}
         </button>
       </div>
-
-      {/* Add Tool Permission Modal */}
-      <InputModal
-        open={toolModal}
-        title="Add Tool Permission"
-        description="Enter the name of the tool to configure access control for. Tools not listed are implicitly allowed."
-        placeholder="e.g. crm_delete"
-        submitLabel="Add Tool"
-        onSubmit={(name) => {
-          updateNested(['tool_permissions', name], { enabled: false });
-          setToolModal(false);
-        }}
-        onCancel={() => setToolModal(false)}
-      />
-
-      {/* Add Data Scope Key Modal */}
-      <InputModal
-        open={scopeModal}
-        title="Add Scope Constraint"
-        description="Enter the parameter key to restrict. You can then specify the allowed values for this parameter."
-        placeholder="e.g. customer_id"
-        submitLabel="Add Constraint"
-        onSubmit={(name) => {
-          updateNested(['data_scope', 'allowed_scopes', name], []);
-          setScopeModal(false);
-        }}
-        onCancel={() => setScopeModal(false)}
-      />
     </form>
   );
 }
