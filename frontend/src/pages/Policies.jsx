@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { policiesApi } from '../api/policies';
 import { RefreshCw, Plus, Edit2, Trash2, Eye, Shield, Play, Pause, ChevronLeft } from 'lucide-react';
 import PolicyForm from '../components/PolicyForm';
+import { ConfirmModal } from '../components/Modal';
 
 export default function PoliciesView({ showToast }) {
   const [policies, setPolicies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState('list'); // 'list', 'create', 'edit'
   const [selectedPolicy, setSelectedPolicy] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const fetchPolicies = async () => {
     setLoading(true);
@@ -25,9 +27,9 @@ export default function PoliciesView({ showToast }) {
     fetchPolicies();
   }, []);
 
-  const handleDelete = async (agentId) => {
-    if (!window.confirm(`Delete policy for agent ${agentId}?\nThis will remove the policy controlling this agent's tool invocations.`)) return;
-    
+  const handleDeleteConfirm = async () => {
+    const agentId = deleteTarget;
+    setDeleteTarget(null);
     try {
       await policiesApi.delete(agentId);
       showToast("Policy deleted successfully", "success");
@@ -180,7 +182,7 @@ export default function PoliciesView({ showToast }) {
                             <Edit2 size={16} />
                           </button>
                           <button 
-                            onClick={() => handleDelete(policy.agent_id)}
+                            onClick={() => setDeleteTarget(policy.agent_id)}
                             className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-colors"
                             title="Delete Policy"
                           >
@@ -196,6 +198,17 @@ export default function PoliciesView({ showToast }) {
           </table>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        open={!!deleteTarget}
+        title="Delete Policy"
+        message={`Are you sure you want to delete the policy for agent "${deleteTarget}"? This will remove all WAF rules controlling this agent's tool invocations. This action cannot be undone.`}
+        confirmLabel="Delete Policy"
+        confirmVariant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }
