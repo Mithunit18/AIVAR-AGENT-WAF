@@ -7,7 +7,7 @@ export default function EventsView({ showToast }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  
+
   // Pagination & Filters
   const [skip, setSkip] = useState(0);
   const [limit] = useState(25);
@@ -27,7 +27,7 @@ export default function EventsView({ showToast }) {
         limit,
         ...filters
       });
-      
+
       setEvents(data.events || []);
       setHasMore((data.events || []).length === limit);
       if (reset) setSkip(0);
@@ -69,18 +69,18 @@ export default function EventsView({ showToast }) {
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-300">
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
-        
+
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-slate-300 font-semibold">
             <Filter size={18} className="text-slate-500" />
             Historical Events
           </div>
-          
+
           <div className="flex flex-wrap items-center gap-3">
-            <select 
-              name="decision" 
-              value={filters.decision} 
+            <select
+              name="decision"
+              value={filters.decision}
               onChange={handleFilterChange}
               className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus:border-indigo-500"
             >
@@ -88,8 +88,8 @@ export default function EventsView({ showToast }) {
               <option value="ALLOW">ALLOW</option>
               <option value="BLOCK">BLOCK</option>
             </select>
-            
-            <input 
+
+            <input
               type="text"
               name="agent_id"
               value={filters.agent_id}
@@ -97,8 +97,8 @@ export default function EventsView({ showToast }) {
               placeholder="Filter by Agent ID"
               className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus:border-indigo-500"
             />
-            
-            <input 
+
+            <input
               type="text"
               name="tool_name"
               value={filters.tool_name}
@@ -106,8 +106,8 @@ export default function EventsView({ showToast }) {
               placeholder="Filter by Tool"
               className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus:border-indigo-500"
             />
-            
-            <button 
+
+            <button
               onClick={() => fetchEvents(true)}
               className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 rounded-md transition-colors"
               title="Refresh"
@@ -146,8 +146,8 @@ export default function EventsView({ showToast }) {
                 </tr>
               ) : (
                 events.map((event) => (
-                  <tr 
-                    key={event.event_id} 
+                  <tr
+                    key={event.event_id}
                     onClick={() => setSelectedEvent(event)}
                     className="hover:bg-slate-800/50 cursor-pointer transition-colors"
                   >
@@ -182,7 +182,7 @@ export default function EventsView({ showToast }) {
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1.5 text-slate-500 text-xs">
-                           <Shield size={12}/> ACTIVE
+                          <Shield size={12} /> ACTIVE
                         </span>
                       )}
                     </td>
@@ -202,14 +202,14 @@ export default function EventsView({ showToast }) {
             Showing {events.length > 0 ? skip + 1 : 0} to {skip + events.length}
           </div>
           <div className="flex items-center gap-2">
-            <button 
+            <button
               onClick={handlePrev}
               disabled={skip === 0 || loading}
               className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-md transition-colors text-slate-300"
             >
               <ChevronLeft size={18} />
             </button>
-            <button 
+            <button
               onClick={handleNext}
               disabled={!hasMore || loading}
               className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-md transition-colors text-slate-300"

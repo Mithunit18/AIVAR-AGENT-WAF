@@ -4,10 +4,10 @@ import { healthApi } from '../api/health';
 
 export function SystemStatus() {
   const [status, setStatus] = useState('loading'); // loading, ok, degraded, down
-  
+
   useEffect(() => {
     let mounted = true;
-    
+
     const checkHealth = async () => {
       try {
         await healthApi.getReady();

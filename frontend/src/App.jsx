@@ -35,23 +35,23 @@ export default function App() {
             <p className="text-sm text-slate-400">Real-time AI Security & Observability</p>
           </div>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row items-center gap-4">
           {/* Main Navigation Tabs */}
           <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800 shadow-sm">
-            <button 
+            <button
               onClick={() => setActiveTab('dashboard')}
               className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'dashboard' ? 'bg-slate-800 text-sky-400 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
             >
               <LayoutDashboard size={16} /> Dashboard
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('events')}
               className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'events' ? 'bg-slate-800 text-sky-400 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
             >
               <List size={16} /> Events
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('policies')}
               className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'policies' ? 'bg-slate-800 text-sky-400 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
             >
@@ -79,10 +79,10 @@ export default function App() {
 
       {/* Global Notifications */}
       {toast && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast(null)} 
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
         />
       )}
     </div>

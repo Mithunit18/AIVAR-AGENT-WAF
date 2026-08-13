@@ -59,16 +59,16 @@ export default function PoliciesView({ showToast }) {
     return (
       <div className="flex flex-col gap-6 animate-in fade-in duration-300">
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={handleBack}
             className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors"
           >
             <ChevronLeft size={20} /> Back to Policies
           </button>
         </div>
-        <PolicyForm 
-          initialData={selectedPolicy} 
-          isEdit={activeView === 'edit'} 
+        <PolicyForm
+          initialData={selectedPolicy}
+          isEdit={activeView === 'edit'}
           onSuccess={handleBack}
           showToast={showToast}
         />
@@ -79,19 +79,19 @@ export default function PoliciesView({ showToast }) {
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-300">
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
-        
+
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-800 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-200">Active Policies</h2>
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={fetchPolicies}
               className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 rounded-lg transition-colors"
               title="Refresh"
             >
               <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
             </button>
-            <button 
+            <button
               onClick={handleCreate}
               className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
             >
@@ -133,7 +133,7 @@ export default function PoliciesView({ showToast }) {
               ) : (
                 policies.map((policy) => {
                   const scopeCount = policy.data_scope?.allowed_scopes ? Object.keys(policy.data_scope.allowed_scopes).length : 0;
-                  
+
                   return (
                     <tr key={policy.agent_id} className="hover:bg-slate-800/50 transition-colors">
                       <td className="px-6 py-4 font-mono text-sky-400 font-medium">
@@ -154,8 +154,8 @@ export default function PoliciesView({ showToast }) {
                         v{policy.version}
                       </td>
                       <td className="px-6 py-4 text-slate-400 text-xs">
-                        {policy.rate_limit?.enabled 
-                          ? `${policy.rate_limit.max_calls} / ${policy.rate_limit.window_seconds}s` 
+                        {policy.rate_limit?.enabled
+                          ? `${policy.rate_limit.max_calls} / ${policy.rate_limit.window_seconds}s`
                           : 'Disabled'}
                       </td>
                       <td className="px-6 py-4 text-slate-400 text-xs">
@@ -174,14 +174,14 @@ export default function PoliciesView({ showToast }) {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <button 
+                          <button
                             onClick={() => handleEdit(policy)}
                             className="p-1.5 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 rounded transition-colors"
                             title="Edit Policy"
                           >
                             <Edit2 size={16} />
                           </button>
-                          <button 
+                          <button
                             onClick={() => setDeleteTarget(policy.agent_id)}
                             className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-colors"
                             title="Delete Policy"

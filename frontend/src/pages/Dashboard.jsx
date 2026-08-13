@@ -13,12 +13,12 @@ export default function DashboardView({ sseEvents, setSseEvents, showToast }) {
   useEffect(() => {
     if (initialFetchDone.current) return;
     initialFetchDone.current = true;
-    
+
     // Fetch initial summary from backend
     dashboardApi.getSummary()
       .then(data => setStats(data))
       .catch(err => showToast("Failed to fetch dashboard summary", "error"));
-      
+
     // Fetch initial events stream seed
     dashboardApi.getEvents({ limit: 50 })
       .then(data => {
@@ -35,7 +35,7 @@ export default function DashboardView({ sseEvents, setSseEvents, showToast }) {
       // Recompute slightly based on active local feed
       const total = sseEvents.length;
       const blocked = sseEvents.filter(e => e.final_disposition === 'BLOCK').length;
-      
+
       const by_rule = {};
       sseEvents.forEach(e => {
         if (e.final_disposition === 'BLOCK' && e.rule_evaluations) {
@@ -47,13 +47,13 @@ export default function DashboardView({ sseEvents, setSseEvents, showToast }) {
       });
 
       // Prefer real backend numbers but merge real-time if backend data is stale
-      setStats(prev => ({ 
+      setStats(prev => ({
         ...prev,
-        total: Math.max(prev.total, total), 
-        blocked: Math.max(prev.blocked, blocked), 
-        allowed: Math.max(prev.allowed, total - blocked), 
-        block_rate: prev.total > 0 ? ((prev.blocked/prev.total)*100).toFixed(1) : 0,
-        by_rule: Object.keys(by_rule).length > 0 ? by_rule : prev.by_rule 
+        total: Math.max(prev.total, total),
+        blocked: Math.max(prev.blocked, blocked),
+        allowed: Math.max(prev.allowed, total - blocked),
+        block_rate: prev.total > 0 ? ((prev.blocked / prev.total) * 100).toFixed(1) : 0,
+        by_rule: Object.keys(by_rule).length > 0 ? by_rule : prev.by_rule
       }));
     }
   }, [sseEvents]);
@@ -81,21 +81,11 @@ export default function DashboardView({ sseEvents, setSseEvents, showToast }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-slate-800">
-            <h3 className="text-sm font-semibold text-slate-300">Traffic Overview</h3>
-          </div>
-          <div className="p-4">
-            <TrafficChart events={sseEvents} />
-          </div>
+        <div className="lg:col-span-2">
+          <TrafficChart events={sseEvents} />
         </div>
-        <div className="lg:col-span-1 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-slate-800">
-            <h3 className="text-sm font-semibold text-slate-300">Block Reasons</h3>
-          </div>
-          <div className="p-4">
-            <BlockBreakdown stats={stats} />
-          </div>
+        <div className="lg:col-span-1">
+          <BlockBreakdown stats={stats} />
         </div>
       </div>
 

@@ -24,7 +24,12 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> List[str]:
-        return [origin.strip() for origin in self.cors_origins.split(",")]
+        origins = [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+        # Always allow local frontend dev servers regardless of .env overrides
+        for local_origin in ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174"]:
+            if local_origin not in origins:
+                origins.append(local_origin)
+        return origins
 
     class Config:
         env_file = ".env"

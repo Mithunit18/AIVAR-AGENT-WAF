@@ -26,10 +26,10 @@ export function BlockEventsTable({ events, onEventClick }) {
               events.map((event, index) => {
                 const isBlocked = event.final_disposition === 'BLOCK';
                 const failedRule = event.rule_evaluations?.find(r => r.status === 'FAIL');
-                
+
                 return (
-                  <tr 
-                    key={index} 
+                  <tr
+                    key={index}
                     onClick={() => onEventClick && onEventClick(event)}
                     className="border-b border-slate-700/50 hover:bg-slate-700/60 transition-colors cursor-pointer"
                   >

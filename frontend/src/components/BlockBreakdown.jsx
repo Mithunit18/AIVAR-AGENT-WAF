@@ -36,7 +36,7 @@ export function BlockBreakdown({ stats }) {
   }
 
   return (
-    <div className="glass-panel p-6 h-full flex flex-col min-h-[300px]">
+    <div className="glass-panel p-6 flex flex-col h-96">
       <h3 className="text-lg font-semibold text-slate-200 mb-4">Block Reasons Breakdown</h3>
       <div className="flex-1 relative">
         <ResponsiveContainer width="100%" height="100%">
@@ -54,13 +54,13 @@ export function BlockBreakdown({ stats }) {
                 <Cell key={`cell-${index}`} fill={COLORS[entry.ruleKey] || '#64748b'} />
               ))}
             </Pie>
-            <Tooltip 
+            <Tooltip
               contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', borderRadius: '0.5rem' }}
               itemStyle={{ color: '#e2e8f0' }}
             />
-            <Legend 
-              verticalAlign="bottom" 
-              height={36} 
+            <Legend
+              verticalAlign="bottom"
+              height={36}
               formatter={(value) => <span className="text-slate-300 text-xs ml-1">{value}</span>}
             />
           </PieChart>

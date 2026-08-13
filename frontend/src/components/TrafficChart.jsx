@@ -5,7 +5,7 @@ export function TrafficChart({ events }) {
   // Aggregate events by minute
   const chartData = useMemo(() => {
     const timeMap = new Map();
-    
+
     // Initialize last 30 minutes with 0
     const now = new Date();
     for (let i = 29; i >= 0; i--) {
@@ -13,7 +13,7 @@ export function TrafficChart({ events }) {
       const timeKey = d.toISOString().substring(11, 16); // HH:mm
       timeMap.set(timeKey, { time: timeKey, allow: 0, block: 0 });
     }
-    
+
     // Fill with actual data
     events.forEach(event => {
       const timeKey = new Date(event.timestamp).toISOString().substring(11, 16);
@@ -26,7 +26,7 @@ export function TrafficChart({ events }) {
         }
       }
     });
-    
+
     return Array.from(timeMap.values());
   }, [events]);
 
@@ -37,18 +37,18 @@ export function TrafficChart({ events }) {
         <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorAllow" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="colorBlock" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
             </linearGradient>
           </defs>
           <XAxis dataKey="time" stroke="#64748b" fontSize={12} tickMargin={10} />
           <YAxis stroke="#64748b" fontSize={12} tickMargin={10} />
           <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-          <Tooltip 
+          <Tooltip
             contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', borderRadius: '0.5rem' }}
             itemStyle={{ fontSize: '14px' }}
           />
