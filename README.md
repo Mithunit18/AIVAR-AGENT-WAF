@@ -800,9 +800,6 @@ Separation between infrastructure and application deployment
 
 Easier future environment reproduction
 
-Interview explanation
-
-"I separated infrastructure provisioning from application deployment. Terraform manages the infrastructure layer, Docker Compose manages the application services on EC2, and GitHub Actions handles application CI/CD."
 
 🐳 Docker & Docker Compose
 
@@ -1467,35 +1464,7 @@ server-side environment configuration
 
 Do not create additional API keys in the same project expecting them to bypass project-level quota restrictions.
 
-🔮 Future Improvements
 
-Potential next steps include:
-
-Container registry integration
-
-Blue/green deployments
-
-Rolling deployments
-
-Prometheus/Grafana monitoring
-
-Centralized logging
-
-Policy-management UI
-
-Per-agent permissions
-
-Per-tool quotas
-
-More granular data-scope policies
-
-Security analytics
-
-Additional AI-agent attack simulations
-
-Automated security regression testing
-
-More advanced agent behavior monitoring
 
 ⭐ Why This Project Stands Out
 
@@ -1561,11 +1530,6 @@ Automated Rollback
         +
 Health Verification
 
-🎤 Interview Explanation — 60 Seconds
-
-"AIVAR is an AI Agent Web Application Firewall that I built to address the security risks of tool-enabled AI agents. The main idea is that an LLM such as Gemini can determine the intent and request a tool, but it should not be the authorization boundary. So I placed a FastAPI-based WAF between the agent and the tools. Every tool invocation goes through independent checks for tool authorization, rate limiting, parameter validation, data scope and sequence prerequisites. Based on those checks, AIVAR either allows the tool execution or blocks it and records the security event.
-
-On the infrastructure side, I containerized the services with Docker Compose and deployed them on AWS EC2. I used Terraform for Infrastructure as Code and GitHub Actions for CI/CD. The pipeline runs tests, validates Docker Compose, builds the production images, deploys to EC2, verifies health and readiness, and automatically rolls back to the previous Git commit if deployment verification fails. This gives the project both an AI-security layer and a production-oriented cloud deployment workflow."
 
 🧠 Core Architecture to Remember
 
